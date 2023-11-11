@@ -570,10 +570,10 @@ static int filter_frame(AVFilterLink *inlink, AVFrame *in)
 
     case FINAL_FRAME:
         gain = gaussian_filter(s, s->index + 10 < 30 ? s->index + 10 : s->index + 10 - 30);
-        s->limiter_buf_index = 0;
         src_index = 0;
-
-        for (n = 0; n < s->limiter_buf_size / inlink->ch_layout.nb_channels; n++) {
+        
+        subframe_length = frame_size(inlink->sample_rate, 100);
+        for (n = 0; n < subframe_length; n++) {
             for (c = 0; c < inlink->ch_layout.nb_channels; c++) {
                 s->limiter_buf[s->limiter_buf_index + c] = src[src_index + c] * gain * s->offset;
             }
@@ -584,7 +584,6 @@ static int filter_frame(AVFilterLink *inlink, AVFrame *in)
                 s->limiter_buf_index -= s->limiter_buf_size;
         }
 
-        subframe_length = frame_size(inlink->sample_rate, 100);
         for (i = 0; i < in->nb_samples / subframe_length; i++) {
             true_peak_limiter(s, dst, subframe_length, inlink->ch_layout.nb_channels);
 
@@ -658,7 +657,8 @@ static int flush_frame(AVFilterLink *outlink)
         offset  = ((s->limiter_buf_size / inlink->ch_layout.nb_channels) - s->prev_nb_samples) * inlink->ch_layout.nb_channels;
         offset -= (frame_size(inlink->sample_rate, 100) - s->prev_nb_samples) * inlink->ch_layout.nb_channels;
         s->buf_index = s->buf_index - offset < 0 ? s->buf_index - offset + s->buf_size : s->buf_index - offset;
-
+        s->limiter_buf_index = s->limiter_buf_index - offset < 0 ? s->limiter_buf_index - offset + s->limiter_buf_size : s->limiter_buf_index - offset;
+        
         for (n = 0; n < nb_samples; n++) {
             for (c = 0; c < inlink->ch_layout.nb_channels; c++) {
                 src[c] = buf[s->buf_index + c];
