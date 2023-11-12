@@ -10,3 +10,8 @@ https://www.bilibili.com/video/BV1FE411P7B3?p=7&spm_id_from=pageDriver&vd_source
 * git init
 **文件操作**
 ![Alt text](image-3.png)
+
+**git 学习网站 **
+https://gitee.com/
+![Alt text](image-5.png)
+
