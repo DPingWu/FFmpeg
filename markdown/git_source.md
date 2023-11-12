@@ -19,5 +19,7 @@ https://gitee.com/
 https://www.bilibili.com/video/BV1VG411F7rB/?spm_id_from=333.337.search-card.all.click&vd_source=f41c9ce13c22aa359346b4b3de622e37
 
 *一个分支的提交合并到另一个分支上去*
+**git cherry-pick**
+![Alt text](image-6.png)
 
 
